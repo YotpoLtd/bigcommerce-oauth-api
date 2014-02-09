@@ -15,7 +15,7 @@ module Bigcommerce
 
       def request(method, path, options, headers={})
         headers.merge!({ :'x-auth-client' => @configuration[:client_id], :'x-auth-token'  => @configuration[:token] })
-        url = "https://api.bigcommerceapp.com/stores/#{@configuration[:store_hash]}/v2#{path}"
+        url = "https://api.bigcommerce.com/stores/#{@configuration[:store_hash]}/v2#{path}"
 
         restclient = RestClient::Resource.new(url)
         if @configuration[:ssl_client_key] && @configuration[:ssl_client_cert] && @configuration[:ssl_ca_file]
