@@ -43,7 +43,7 @@ module Bigcommerce
           elsif response.code == 204
             nil
           end
-        rescue RestClient::NotModified
+        rescue RestClient::NotModified, RestClient::NotFound
           nil
         rescue RestClient::Unauthorized, RestClient::Forbidden => e
           raise Bigcommerce::HTTPUnauthorized.new 'invalid bigcommerce credentials'
