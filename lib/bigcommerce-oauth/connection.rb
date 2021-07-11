@@ -14,6 +14,17 @@ module Bigcommerce
       end
 
       def request(method, path, options, headers={})
+        loop do
+          begin
+            return request_impl(method, path, options, headers)
+          rescue RestClient::TooManyRequests => e
+            retry_after = e.response.headers[:x_retry_after].to_i
+            sleep(retry_after)
+          end
+        end
+      end
+
+      def request_impl(method, path, options, headers={})
         headers.merge!({ :'x-auth-client' => @configuration[:client_id], :'x-auth-token'  => @configuration[:token] })
         url = "https://api.bigcommerce.com/stores/#{@configuration[:store_hash]}/v2#{path}"
 
@@ -43,6 +54,8 @@ module Bigcommerce
           elsif response.code == 204
             nil
           end
+        rescue RestClient::TooManyRequests => e
+          raise e
         rescue RestClient::NotModified, RestClient::NotFound
           nil
         rescue RestClient::Unauthorized, RestClient::Forbidden => e
